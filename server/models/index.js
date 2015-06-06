@@ -1,18 +1,98 @@
 var db = require('../db');
 
-
-
+db.connection.connect();
 
 module.exports = {
   messages: {
-    get: function () {}, // a function which produces all the messages
-    post: function () {} // a function which can be used to insert a message into the database
+    get: function (req, res) {
+      console.log('messages get called');
+      db.connection.query('select * from messages', function(err, rows, fields){
+        if(err) {
+          console.log("ERROR AT GET", err);
+          res.json({"code" : 100, "status" : 'Database connection error'});
+          return;
+        } else {
+          console.log('response: ' + rows);
+          res.json(rows);
+        }
+      });
+    }, // a function which produces all the messages
+    post: function (req, res) {
+      var postContent = req.body;
+      console.log(postContent);
+      var post = {username: postContent.username, message: postContent.message, createdAt: new Date(), roomname: postContent.roomname};
+      var hasUsername = false;
+      db.connection.query("select * from users", function(err,rows, fields) {
+        if(!err) {
+          for(var i = 0; i < rows.length; i++) {
+            console.log(rows[i].username.toLowerCase() === postContent.username.toLowerCase());
+            if(rows[i].username.toLowerCase() === postContent.username.toLowerCase()) {
+              hasUsername = true;
+            }
+          }
+        }
+        if(!hasUsername) {
+          var userName = {username: postContent.username};
+          db.connection.query("insert into users SET ?", userName, function(err, result) {
+            if(err) {
+              console.log("ERROR AFTER POST", err);
+              res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+              return;
+            }
+            db.connection.query("insert into messages SET ?", post, function(err, result) {
+                if(err) {
+                  console.log("ERROR AFTER POST", err);
+                  res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+                  return;
+                } else {
+                  res.json(post);
+                }
+            });
+          });
+        } else {
+          db.connection.query("insert into messages SET ?", post, function(err, result) {
+              if(err) {
+                console.log("ERROR AFTER POST", err);
+                res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+                return;
+              } else {
+                res.json(result);
+              }
+          });
+        }
+      });
+    } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
-    get: function () {},
-    post: function () {}
+    get: function (req, res) {
+      db.connection.query('select * from users', function(err, rows, fields){
+        if(err) {
+          console.log("ERROR AT GET", err);
+          res.json({"code" : 100, "status" : 'Database connection error'});
+          return;
+        } else {
+          res.json(rows);
+        }
+      });
+    },
+    post: function (req, res) {
+      var postContent = req.body;
+      console.log(postContent);
+      var post = {username: postContent.username};
+      console.log('getting to db query');
+      db.connection.query("insert into users SET ?", post, function(err, result) {
+          if(err) {
+            console.log("ERROR AFTER POST", err);
+            res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+            return;
+          } else {
+            console.log('getting to response' + result);
+            res.json(result);
+          }
+      });
+    }
   }
 };
 

@@ -1,6 +1,7 @@
 var express = require('express');
 var mysql = require('mysql');
 var db = require('./db');
+var models = require('./models');
 
 // Middleware
 var morgan = require('morgan');
@@ -31,96 +32,92 @@ if (!module.parent) {
   console.log("Listening on", app.get("port"));
 }
 
-var connection = mysql.createConnection({host: 'localhost', user: 'root', database: 'chat'});
+// var handleGet = function(req, res) {
+//   // console.log("heard get");
+//   // console.log(req.body);
+//   db.connection.query('select * from messages', function(err, rows, fields){
+//     if(err) {
+//       console.log("ERROR AT GET", err);
+//       res.json({"code" : 100, "status" : 'Database connection error'});
+//       return;
+//     } else {
+//       res.json(rows);
+//     }
+//   });
+// };
 
-connection.connect();
+// var handleUserPost = function(req, res) {
+//   var postContent = req.body;
+//   console.log(postContent);
+//   var post = {username: postContent.username};
+//   db.connection.query("insert into users SET ?", post, function(err, result) {
+//       if(err) {
+//         console.log("ERROR AFTER POST", err);
+//         res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+//         return;
+//       } else {
+//         res.json('You posted: ' + 'placeholder');
+//       }
+//   });
+// };
 
-var handleGet = function(req, res) {
-  // console.log("heard get");
-  // console.log(req.body);
-  connection.query('select * from messages', function(err, rows, fields){
-    if(err) {
-      console.log("ERROR AT GET", err);
-      res.json({"code" : 100, "status" : 'Database connection error'});
-      return;
-    } else {
-      res.json(rows);
-    }
-  });
-};
+// var handleMessagePost = function(req, res) {
+//   var postContent = req.body;
+//   console.log(postContent);
+//   var post = {username: postContent.username, message: postContent.message, createdAt: new Date(), roomname: postContent.roomname};
+//   var hasUsername = false;
+//   db.connection.query("select * from users", function(err,rows, fields) {
+//     if(!err) {
+//       for(var i = 0; i < rows.length; i++) {
+//         console.log(rows[i].username.toLowerCase() === postContent.username.toLowerCase());
+//         if(rows[i].username.toLowerCase() === postContent.username.toLowerCase()) {
 
-var handleUserPost = function(req, res) {
-  var postContent = req.body;
-  console.log(postContent);
-  var post = {username: postContent.username};
-  connection.query("insert into users SET ?", post, function(err, result) {
-      if(err) {
-        console.log("ERROR AFTER POST", err);
-        res.json({"code" : 100, "status" : 'Failed to insert post into database'});
-        return;
-      } else {
-        res.json('You posted: ' + 'placeholder');
-      }
-  });
-};
-
-var handleMessagePost = function(req, res) {
-  var postContent = req.body;
-  console.log(postContent);
-  var post = {username: postContent.username, message: postContent.message, createdAt: new Date(), roomname: postContent.roomname};
-  var hasUsername = false;
-  connection.query("select * from users", function(err,rows, fields) {
-    if(!err) {
-      for(var i = 0; i < rows.length; i++) {
-        console.log(rows[i].username.toLowerCase() === postContent.username.toLowerCase());
-        if(rows[i].username.toLowerCase() === postContent.username.toLowerCase()) {
-
-          hasUsername = true;
-        }
-      }
-    }
-    if(!hasUsername) {
-      var userName = {username: postContent.username};
-      connection.query("insert into users SET ?", userName, function(err, result) {
-        if(err) {
-          console.log("ERROR AFTER POST", err);
-          res.json({"code" : 100, "status" : 'Failed to insert post into database'});
-          return;
-        }
-        connection.query("insert into messages SET ?", post, function(err, result) {
-            if(err) {
-              console.log("ERROR AFTER POST", err);
-              res.json({"code" : 100, "status" : 'Failed to insert post into database'});
-              return;
-            } else {
-              res.json('You posted: ' + 'placeholder');
-            }
-        });
-      });
-    } else {
-      connection.query("insert into messages SET ?", post, function(err, result) {
-          if(err) {
-            console.log("ERROR AFTER POST", err);
-            res.json({"code" : 100, "status" : 'Failed to insert post into database'});
-            return;
-          } else {
-            res.json('You posted: ' + 'placeholder');
-          }
-      });
-    }
-  });
-};
+//           hasUsername = true;
+//         }
+//       }
+//     }
+//     if(!hasUsername) {
+//       var userName = {username: postContent.username};
+//       db.connection.query("insert into users SET ?", userName, function(err, result) {
+//         if(err) {
+//           console.log("ERROR AFTER POST", err);
+//           res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+//           return;
+//         }
+//         db.connection.query("insert into messages SET ?", post, function(err, result) {
+//             if(err) {
+//               console.log("ERROR AFTER POST", err);
+//               res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+//               return;
+//             } else {
+//               res.json('You posted: ' + postContent.username);
+//             }
+//         });
+//       });
+//     } else {
+//       db.connection.query("insert into messages SET ?", post, function(err, result) {
+//           if(err) {
+//             console.log("ERROR AFTER POST", err);
+//             res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+//             return;
+//           } else {
+//             res.json('You posted: ' + result);
+//           }
+//       });
+//     }
+//   });
+// };
 
 app.get("/classes", function(req, res){
-  handleGet(req,res);
+  models.messages.get(req,res);
 });
 
 app.post("/classes/users", function(req, res){
-  handleUserPost(req,res);
+  models.users.post(req,res);
 });
 
 app.post("/classes/message", function(req, res){
   console.log("heard post");
-  handleMessagePost(req,res);
+  models.messages.post(req,res);
 });
 
