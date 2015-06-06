@@ -71,7 +71,6 @@ var app = {
   },
 
   send: function(message) {
-    console.log(message);
     $.ajax({
       url: 'http://127.0.0.1:3000/classes/message',
       type: 'POST',
@@ -92,7 +91,6 @@ var app = {
       type: 'GET',
       contentType: 'application/json',
       success: function(data) {
-        console.log(data);
         app.getNewDataObjects(data);
       },
       error: function(data) {
@@ -173,7 +171,7 @@ var app = {
 
 app.init();
 $(document).on('click', '.username', function(el) {
-  app.addNewFriend($(this).message());
+  // app.addNewFriend($(this).message());
 
 });
 

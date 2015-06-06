@@ -67,15 +67,47 @@ var handleUserPost = function(req, res) {
 var handleMessagePost = function(req, res) {
   var postContent = req.body;
   console.log(postContent);
-  var post = {message: postContent.message, createdAt: new Date(), roomname: postContent.roomname};
-  connection.query("insert into messages SET ?", post, function(err, result) {
-      if(err) {
-        console.log("ERROR AFTER POST", err);
-        res.json({"code" : 100, "status" : 'Failed to insert post into database'});
-        return;
-      } else {
-        res.json('You posted: ' + 'placeholder');
+  var post = {username: postContent.username, message: postContent.message, createdAt: new Date(), roomname: postContent.roomname};
+  var hasUsername = false;
+  connection.query("select * from users", function(err,rows, fields) {
+    if(!err) {
+      for(var i = 0; i < rows.length; i++) {
+        console.log(rows[i].username.toLowerCase() === postContent.username.toLowerCase());
+        if(rows[i].username.toLowerCase() === postContent.username.toLowerCase()) {
+
+          hasUsername = true;
+        }
       }
+    }
+    if(!hasUsername) {
+      var userName = {username: postContent.username};
+      connection.query("insert into users SET ?", userName, function(err, result) {
+        if(err) {
+          console.log("ERROR AFTER POST", err);
+          res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+          return;
+        }
+        connection.query("insert into messages SET ?", post, function(err, result) {
+            if(err) {
+              console.log("ERROR AFTER POST", err);
+              res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+              return;
+            } else {
+              res.json('You posted: ' + 'placeholder');
+            }
+        });
+      });
+    } else {
+      connection.query("insert into messages SET ?", post, function(err, result) {
+          if(err) {
+            console.log("ERROR AFTER POST", err);
+            res.json({"code" : 100, "status" : 'Failed to insert post into database'});
+            return;
+          } else {
+            res.json('You posted: ' + 'placeholder');
+          }
+      });
+    }
   });
 };
 
