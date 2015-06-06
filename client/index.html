@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>chatterbox</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+    <!-- dependencies -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <script src="bower_components/underscore/underscore-min.js"></script>
+    <!-- your scripts -->
+    <script src="env/config.js"></script>
+    <script src="scripts/app.js"></script>
+  </head>
+  <body>
+  <!-- Your HTML goes here! -->
+
+
+    <div id="main">
+    <div class="uleft"></div>
+    <div class="umid">
+      <h1>CHATTERBOX</h1>
+    </div>
+    <div class="uright"></div>
+    <div class="mleft">
+      <div class ="submitmessagewrapper">
+      <div id="submitmessage">
+        <form id="send">
+          Room: <input type="text" class="userroom" value="Default">
+          Username: <input type="text" class="username" value="Anonymous">
+          Message: <input type="text" class="usermessage" value="Hello World!">
+          <input type="button" class="submit" value="Submit">
+        </form>
+      </div>
+      </div>
+      <div class="userfriendswrapper">
+      <div id="userfriends">Friends: </div>
+      </div>
+    </div>
+    <div class="mmid"><div>
+      <div id="chats"></div></div></div>
+    <div class="mright">
+      <div class="sendroomwrapper">
+        <form id="sendroom">
+        Create New Room: <input type="text" class="userroom" value="Default">
+        <input type="button" class="submitroom" value="Submit">
+        <input type="button" class="showAllRooms" value="Show All Rooms">
+      </form>
+      </div>
+      <div class="roomswrapper">
+        <div id="roomSelect">Rooms: </div>
+      </div>
+      <div class="userselectwrapper">
+        <div id="userSelect">Current Users: </div>
+      </div>
+    </div>
+    <div class="lleft"></div>
+    <div class="lmid"></div>
+    <div class="lright"></div>
+  </div>
+  </body>
+</html>
