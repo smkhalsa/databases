@@ -31,10 +31,11 @@ var app = {
   },
 
   getNewDataObjects: function(data) {
+    console.log(data);
     var newDataObjects = [];
     var fetchedObjects = data;
     for (var i = 0; i < fetchedObjects.length; i++) {
-      var fetchedObjectId = fetchedObjects[i].ID;
+      var fetchedObjectId = fetchedObjects[i].id;
       if (!app.dataObjects[fetchedObjectId]) {
         app.dataObjects[fetchedObjectId] = fetchedObjects[i];
         newDataObjects.push(fetchedObjects[i]);

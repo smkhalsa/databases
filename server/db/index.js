@@ -17,35 +17,19 @@ var sequelize = new Sequelize('chat', 'root', '', {
 });
 
 var Users = sequelize.define('users', {
-  username: {
-    type: Sequelize.STRING,
-    primaryKey: true
-  }
+  username: Sequelize.STRING
 });
-
-Users.sync({force: true});
 
 var Messages = sequelize.define('messages', {
-  ID: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  username: {
-    type: Sequelize.STRING,
-    references: {
-      model: Users,
-      key: 'username'
-    }
-  },
-  message: {
-    type: Sequelize.STRING
-  },
-  room: {
-    type: Sequelize.STRING
-  }
+  message: Sequelize.STRING,
+  roomname: Sequelize.STRING
 });
 
-Messages.sync({force: true});
+Users.hasMany(Messages);
+Messages.belongsTo(Users);
 
+Users.sync();
+Messages.sync();
+
+exports.Users = Users;
+exports.Messages = Messages;

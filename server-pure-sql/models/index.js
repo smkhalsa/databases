@@ -41,6 +41,7 @@ module.exports = {
                   res.json({"code" : 100, "status" : 'Failed to insert post into database'});
                   return;
                 } else {
+                  // res.sendStatus(201)
                   res.json(post);
                 }
             });

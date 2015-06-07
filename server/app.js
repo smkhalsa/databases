@@ -1,7 +1,8 @@
 var express = require('express');
 var mysql = require('mysql');
 var db = require('./db');
-var models = require('./models');
+// you messed with this, change it back later
+var models = require('./controllers');
 
 // Middleware
 var morgan = require('morgan');
